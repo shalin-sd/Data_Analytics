@@ -3,6 +3,9 @@ import plotly.express as px
 import pandas as pd
 import os
 import warnings
+import matplotlib.pyplot as plt
+# %matplotlib inline
+
 warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Superstore!!!")
 st.title(" :bar_chart: Sample SuperStore EDA")
@@ -11,13 +14,13 @@ fl = st.file_uploader(":file_folder: Upload a file",type=(["csv","txt","xlsx","x
 if fl is not None:
     filename = fl.name
     st.write(filename)
-    df = pd.read_csv(filename, encoding = "ISO-8859-1", error_bad_lines=False, lineterminator='\n')
+    df = pd.read_csv(filename, encoding = "ISO-8859-1")
 else:
-    os.chdir(r"D:\all programs\Major_project")
-    df = pd.read_csv("shop.csv", encoding = "ISO-8859-1", error_bad_lines=False, lineterminator='\n')
+    os.chdir(r"C:\Users\admin\Dropbox\PC\Desktop\major_final\Data_Analytics")
+    df = pd.read_csv("abc.csv", encoding = "ISO-8859-1")
 
 col1, col2 = st.columns((2))
-df["Order Date"] = pd.to_datetime(df["Order Date"])
+df["Order Date"] = pd.to_datetime(df["Order Date"],format="mixed")
 
 # Getting the min and max date 
 startDate = pd.to_datetime(df["Order Date"]).min()
@@ -85,7 +88,7 @@ with col2:
 cl1, cl2 = st.columns((2))
 with cl1:
     with st.expander("Category_ViewData"):
-        st.write(category_df.style.background_gradient(cmap="Blues"))
+        # st.write(category_df.style.background_gradient(cmap="Blues"))
         csv = category_df.to_csv(index = False).encode('utf-8')
         st.download_button("Download Data", data = csv, file_name = "Category.csv", mime = "text/csv",
                             help = 'Click here to download the data as a CSV file')
@@ -93,7 +96,7 @@ with cl1:
 with cl2:
     with st.expander("Region_ViewData"):
         region = filtered_df.groupby(by = "Region", as_index = False)["Sales"].sum()
-        st.write(region.style.background_gradient(cmap="Oranges"))
+        # st.write(region.style.background_gradient(cmap="Oranges"))
         csv = region.to_csv(index = False).encode('utf-8')
         st.download_button("Download Data", data = csv, file_name = "Region.csv", mime = "text/csv",
                         help = 'Click here to download the data as a CSV file')
@@ -106,7 +109,7 @@ fig2 = px.line(linechart, x = "month_year", y="Sales", labels = {"Sales": "Amoun
 st.plotly_chart(fig2,use_container_width=True)
 
 with st.expander("View Data of TimeSeries:"):
-    st.write(linechart.T.style.background_gradient(cmap="Blues"))
+    # st.write(linechart.T.style.background_gradient(cmap="Blues"))
     csv = linechart.to_csv(index=False).encode("utf-8")
     st.download_button('Download Data', data = csv, file_name = "TimeSeries.csv", mime ='text/csv')
 
@@ -140,7 +143,7 @@ with st.expander("Summary_Table"):
     st.markdown("Month wise sub-Category Table")
     filtered_df["month"] = filtered_df["Order Date"].dt.month_name()
     sub_category_Year = pd.pivot_table(data = filtered_df, values = "Sales", index = ["Sub-Category"],columns = "month")
-    st.write(sub_category_Year.style.background_gradient(cmap="Blues"))
+    # st.write(sub_category_Year.style.background_gradient(cmap="Blues"))
 
 # Create a scatter plot
 data1 = px.scatter(filtered_df, x = "Sales", y = "Profit", size = "Quantity")
@@ -149,8 +152,8 @@ data1['layout'].update(title="Relationship between Sales and Profits using Scatt
                        yaxis = dict(title = "Profit", titlefont = dict(size=19)))
 st.plotly_chart(data1,use_container_width=True)
 
-with st.expander("View Data"):
-    st.write(filtered_df.iloc[:500,1:20:2].style.background_gradient(cmap="Oranges"))
+# with st.expander("View Data"):
+#     # st.write(filtered_df.iloc[:500,1:20:2].style.background_gradient(cmap="Oranges"))
 
 # Download orginal DataSet
 csv = df.to_csv(index = False).encode('utf-8')
